@@ -1,15 +1,15 @@
 #include "Handler.hpp"
 
-void    Handler::exec_method(Client &client)
+void Handler::exec_method(Client &client)
 {
 	std::string res = "";
 
 	if (client._status == Client::START)
-    {
-        if (client._req.get_body().size() > (unsigned long)client._req.get_limit())
-            client._req.set_error_code(413);
-    }
-    int method = client._req.get_method();
+	{
+		if (client._req.get_body().size() > (unsigned long)client._req.get_limit())
+			client._req.set_error_code(413);
+	}
+	int method = client._req.get_method();
 
 	if (method == GET)
 		Get(client);
@@ -29,10 +29,10 @@ void    Handler::exec_method(Client &client)
 
 void Handler::setDate(Client &client)
 {
-	struct timeval 	cur_time;
-	struct tm 		time;
-	char 			buf[128];
-	std::string 	date;
+	struct timeval cur_time;
+	struct tm time;
+	char buf[128];
+	std::string date;
 
 	gettimeofday(&cur_time, 0);
 	strptime(std::to_string(cur_time.tv_sec).c_str(), "%s", &time); // seconds in tm format
@@ -44,42 +44,40 @@ void Handler::setDate(Client &client)
 void Handler::setContentType(Client &client)
 {
 	std::string content = client._req.get_conf()["path"];
-    std::string extensions[103] =
-	{
-		"html", "htm", "shtml", "css", "xml", "gif","jpeg", "jpg", "js", "atom",
-		"rss", "mml", "txt", "jad", "wml", "htc", "png", "tif", "tiff", "wbmp",
-		"ico", "jng", "bmp", "svg", "svgz", "webp", "woff", "jar", "war", "ear",
-		"json", "hqx", "doc", "pdf", "ps", "eps", "ai", "rtf", "m3u8", "xls",
-		"eot", "ppt", "wmlc", "kml", "kmz", "7z", "cco", "jardiff", "jnlp", "run",
-		"pl", "pm", "prc", "pdb", "rar", "rpm", "sea", "swf", "sit", "tcl",
-		"tk", "der", "pem",	"crt", "xpi", "xhtml", "xspf", "zip", "bin", "exe",
-		"dll", "deb", "dmg", "iso", "img", "msi", "msp", "msm", "docx", "xlsx",
-		"pptx", "mid", "midi","kar","mp3", "ogg","m4a", "ra", "3gpp", "3gp",
-		"ts","mp4","mpeg", "mpg", "mov", "webm", "flv", "m4v", "mng", "asx",
-		"asf","wmv","avi"
-	};
+	std::string extensions[103] =
+			{
+					"html", "htm", "shtml", "css", "xml", "gif", "jpeg", "jpg", "js", "atom",
+					"rss", "mml", "txt", "jad", "wml", "htc", "png", "tif", "tiff", "wbmp",
+					"ico", "jng", "bmp", "svg", "svgz", "webp", "woff", "jar", "war", "ear",
+					"json", "hqx", "doc", "pdf", "ps", "eps", "ai", "rtf", "m3u8", "xls",
+					"eot", "ppt", "wmlc", "kml", "kmz", "7z", "cco", "jardiff", "jnlp", "run",
+					"pl", "pm", "prc", "pdb", "rar", "rpm", "sea", "swf", "sit", "tcl",
+					"tk", "der", "pem", "crt", "xpi", "xhtml", "xspf", "zip", "bin", "exe",
+					"dll", "deb", "dmg", "iso", "img", "msi", "msp", "msm", "docx", "xlsx",
+					"pptx", "mid", "midi", "kar", "mp3", "ogg", "m4a", "ra", "3gpp", "3gp",
+					"ts", "mp4", "mpeg", "mpg", "mov", "webm", "flv", "m4v", "mng", "asx",
+					"asf", "wmv", "avi"};
 
 	std::string types[103] =
-	{
-		"text/html", "text/html", "text/html", "text/css", "text/xml","image/gif", "image/jpeg", "image/jpeg","application/javascript","application/atom+xml",
-		"application/rss+xml","text/mathml","text/plain","text/vnd.sun.j2me.app-descriptor","text/vnd.wap.wml","text/x-component","image/png","image/tiff", "image/tiff","image/vnd.wap.wbmp",
-		"image/x-icon","image/x-jng","image/x-ms-bmp","image/svg+xml", "image/svg+xml", "image/webp","application/font-woff","application/java-archive", "application/java-archive", "application/java-archive",
-		"application/json","application/mac-binhex40","application/msword","application/pdf","application/postscript",
-		"application/postscript", "application/postscript","application/rtf","application/vnd.apple.mpegurl","application/vnd.ms-excel",
-		"application/vnd.ms-fontobject", "application/vnd.ms-powerpoint","application/vnd.wap.wmlc","application/vnd.google-earth.kml+xml","application/vnd.google-earth.kmz",
-		"application/x-7z-compressed","application/x-cocoa","application/x-java-archive-diff","application/x-java-jnlp-file","application/x-makeself",
-		"application/x-perl", "application/x-perl","application/x-pilot", "application/x-pilot","application/x-rar-compressed",
-		"application/x-redhat-package-manager","application/x-sea","application/x-shockwave-flash","application/x-stuffit","application/x-tcl",
-		"application/x-tcl","application/x-x509-ca-cert", "application/x-x509-ca-cert", "application/x-x509-ca-cert","application/x-xpinstall",
-		"application/xhtml+xml","application/xspf+xml","application/zip","application/octet-stream", "application/octet-stream",
-		"application/octet-stream","application/octet-stream","application/octet-stream","application/octet-stream", "application/octet-stream",
-		"application/octet-stream", "application/octet-stream",  "application/octet-stream", "application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-		"application/vnd.openxmlformats-officedocument.presentationml.presentation","audio/midi", "audio/midi", "audio/midi","audio/mpeg",
-		"audio/ogg","audio/x-m4a","audio/x-realaudio","video/3gpp", "video/3gpp",
-		"video/mp2t","video/mp4","video/mpeg", "video/mpeg","video/quicktime",
-		"video/webm","video/x-flv","video/x-m4v","video/x-mng","video/x-ms-asf",
-		"video/x-ms-asf", "video/x-ms-wmv", "video/x-msvideo"
-	};
+			{
+					"text/html", "text/html", "text/html", "text/css", "text/xml", "image/gif", "image/jpeg", "image/jpeg", "application/javascript", "application/atom+xml",
+					"application/rss+xml", "text/mathml", "text/plain", "text/vnd.sun.j2me.app-descriptor", "text/vnd.wap.wml", "text/x-component", "image/png", "image/tiff", "image/tiff", "image/vnd.wap.wbmp",
+					"image/x-icon", "image/x-jng", "image/x-ms-bmp", "image/svg+xml", "image/svg+xml", "image/webp", "application/font-woff", "application/java-archive", "application/java-archive", "application/java-archive",
+					"application/json", "application/mac-binhex40", "application/msword", "application/pdf", "application/postscript",
+					"application/postscript", "application/postscript", "application/rtf", "application/vnd.apple.mpegurl", "application/vnd.ms-excel",
+					"application/vnd.ms-fontobject", "application/vnd.ms-powerpoint", "application/vnd.wap.wmlc", "application/vnd.google-earth.kml+xml", "application/vnd.google-earth.kmz",
+					"application/x-7z-compressed", "application/x-cocoa", "application/x-java-archive-diff", "application/x-java-jnlp-file", "application/x-makeself",
+					"application/x-perl", "application/x-perl", "application/x-pilot", "application/x-pilot", "application/x-rar-compressed",
+					"application/x-redhat-package-manager", "application/x-sea", "application/x-shockwave-flash", "application/x-stuffit", "application/x-tcl",
+					"application/x-tcl", "application/x-x509-ca-cert", "application/x-x509-ca-cert", "application/x-x509-ca-cert", "application/x-xpinstall",
+					"application/xhtml+xml", "application/xspf+xml", "application/zip", "application/octet-stream", "application/octet-stream",
+					"application/octet-stream", "application/octet-stream", "application/octet-stream", "application/octet-stream", "application/octet-stream",
+					"application/octet-stream", "application/octet-stream", "application/octet-stream", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"application/vnd.openxmlformats-officedocument.presentationml.presentation", "audio/midi", "audio/midi", "audio/midi", "audio/mpeg",
+					"audio/ogg", "audio/x-m4a", "audio/x-realaudio", "video/3gpp", "video/3gpp",
+					"video/mp2t", "video/mp4", "video/mpeg", "video/mpeg", "video/quicktime",
+					"video/webm", "video/x-flv", "video/x-m4v", "video/x-mng", "video/x-ms-asf",
+					"video/x-ms-asf", "video/x-ms-wmv", "video/x-msvideo"};
 
 	std::size_t pos = content.rfind(".");
 	std::string res = "";
@@ -87,12 +85,12 @@ void Handler::setContentType(Client &client)
 	if (pos != std::string::npos)
 	{
 		std::string ext = content.substr(pos + 1);
-		for (; i < 103 ; ++i)
+		for (; i < 103; ++i)
 		{
 			if (ext == extensions[i])
 			{
 				res = types[i];
-				break ;
+				break;
 			}
 		}
 	}
@@ -100,13 +98,12 @@ void Handler::setContentType(Client &client)
 		res = "text/plain";
 
 	client._res._header.insert(std::pair<std::string, std::string>("Content-Type", res));
-
 }
 
 void Handler::setContentLocation(Client &client)
 {
 	std::string loc = client._req.get_conf()["path"];
-    client._res._header.insert(std::pair<std::string, std::string>("Content-Location", loc));
+	client._res._header.insert(std::pair<std::string, std::string>("Content-Location", loc));
 }
 
 void Handler::setContentLanguage(Client &client)
@@ -114,29 +111,26 @@ void Handler::setContentLanguage(Client &client)
 	client._res._header.insert(std::pair<std::string, std::string>("Content-Language", "en"));
 }
 
-
 void Handler::setAllow(Client &client)
 {
 	std::string str = client._req.get_conf()["method_allowed"];
 	client._res._header.insert(std::pair<std::string, std::string>("Allow", str));
-
 }
 
-void Handler::setLastModified(Client& client)
+void Handler::setLastModified(Client &client)
 {
-	struct	stat info;
-	struct	tm	time;
-	char	buf[1024];
+	struct stat info;
+	struct tm time;
+	char buf[1024];
 
 	std::string content = client._req.get_conf()["path"];
-    stat(content.c_str(), &info);
+	stat(content.c_str(), &info);
 	if (!S_ISDIR(info.st_mode))
 		stat(client._req.get_conf()["error_page"].c_str(), &info);
 	strptime(std::to_string(info.st_mtime).c_str(), "%s", &time);
 	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S KST", &time); // tm to regexp format
 
 	client._res._header.insert(std::pair<std::string, std::string>("Last-Modified", buf));
-
 }
 
 void Handler::setWWWAuthentication(Client &client)
@@ -157,9 +151,9 @@ void Handler::setTransferEncoding(Client &client)
 std::string Handler::getStartLine(Client &client)
 {
 	int code = client._req.get_error_code();
-    std::string value = client._res._status_table.find(code)->second;
-    
-    std::string res = "HTTP/1.1 ";
+	std::string value = client._res._status_table.find(code)->second;
+
+	std::string res = "HTTP/1.1 ";
 	res += std::to_string(code);
 	res += " ";
 	res += value;
@@ -167,80 +161,79 @@ std::string Handler::getStartLine(Client &client)
 	return (res);
 }
 
-void Handler::Get (Client &client)
+void Handler::Get(Client &client)
 {
 	std::string res;
 	struct stat info;
 
 	if (client._status == Client::START)
-    {
+	{
 		stat(client._req.get_conf()["path"].c_str(), &info);
-        if (S_ISDIR(info.st_mode) && client._req.get_conf()["autoindex"] == "on")
-            client.autoidx_flag = 1;
+		if (S_ISDIR(info.st_mode) && client._req.get_conf()["autoindex"] == "on")
+			client.autoidx_flag = 1;
 
-        std::string file_extension = "." + trim_extension(client._req.get_conf()["path"]);
-        std::vector<std::string> extensions = split(client._req.get_conf()["cgi_extension"], ' ');
+		std::string file_extension = "." + trim_extension(client._req.get_conf()["path"]);
+		std::vector<std::string> extensions = split(client._req.get_conf()["cgi_extension"], ' ');
 
-        for (unsigned long i = 0; i < extensions.size(); i++)
-        {
-            if (extensions[i] == file_extension)
-            {
-                cgi(extensions[i], client);
-                client._status = Client::CGI;
-                return ;
-            }
-        }
+		for (unsigned long i = 0; i < extensions.size(); i++)
+		{
+			if (extensions[i] == file_extension)
+			{
+				cgi(extensions[i], client);
+				client._status = Client::CGI;
+				return;
+			}
+		}
 
-        if (client._req.get_error_code() == 200)
-        {
-            if (client.autoidx_flag == 1)
-                client._res._body = autoindex(client);
-            else
-                client.read_fd = open(client._req.get_conf()["path"].c_str(), O_RDONLY);
-        }
-        else
-            client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
-    
-        client._status = Client::HEADERS;
-        client.set_read_file(true);
-        return ;
-    }
-    else if (client._status == Client::CGI)
-    {
-        if (client.read_fd == -1)
+		if (client._req.get_error_code() == 200)
+		{
+			if (client.autoidx_flag == 1)
+				client._res._body = autoindex(client);
+			else
+				client.read_fd = open(client._req.get_conf()["path"].c_str(), O_RDONLY);
+		}
+		else
+			client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
+
+		client._status = Client::HEADERS;
+		client.set_read_file(true);
+		return;
+	}
+	else if (client._status == Client::CGI)
+	{
+		if (client.read_fd == -1)
 		{
 			parseCGIResult(client);
 			client._status = Client::HEADERS;
 		}
-        return ;
-    }
-    else if (client._status == Client::HEADERS)
-    {
+		return;
+	}
+	else if (client._status == Client::HEADERS)
+	{
 		client._res._start_line = getStartLine(client);
 
-        if (client._req.get_error_code() == 401)
-            setWWWAuthentication(client);
-        setAllow(client);
-        setDate(client);
-        setLastModified(client);
-        setServer(client);
+		if (client._req.get_error_code() == 401)
+			setWWWAuthentication(client);
+		setAllow(client);
+		setDate(client);
+		setLastModified(client);
+		setServer(client);
 
-        if (client.autoidx_flag == 1 || client._req.get_error_code() != 200)
-            client._res._header["Content-Type"] = "text/html";
-        else
-            setContentType(client);
-        client._status = Client::BODY;
-        
-    }
+		if (client.autoidx_flag == 1 || client._req.get_error_code() != 200)
+			client._res._header["Content-Type"] = "text/html";
+		else
+			setContentType(client);
+		client._status = Client::BODY;
+	}
 	else if (client._status == Client::BODY)
-    {
+	{
 		if (client.read_fd == -1)
-        {
-            client._res._header["Content-Length"] = std::to_string(client._res._body.size());
-            create_response(client);
-            client._status = Client::RESPONSE;
-        }
-    }
+		{
+			client._res._header["Content-Length"] = std::to_string(client._res._body.size());
+			create_response(client);
+			client._status = Client::RESPONSE;
+		}
+	}
 }
 
 void Handler::Head(Client &client)
@@ -249,53 +242,53 @@ void Handler::Head(Client &client)
 	struct stat info;
 
 	if (client._status == Client::START)
-    {
+	{
 		stat(client._req.get_conf()["path"].c_str(), &info);
-        if (S_ISDIR(info.st_mode) && client._req.get_conf()["autoindex"] == "on")
-            client.autoidx_flag = 1;
+		if (S_ISDIR(info.st_mode) && client._req.get_conf()["autoindex"] == "on")
+			client.autoidx_flag = 1;
 
-        if (client._req.get_error_code() == 200)
-        {
-            if (client.autoidx_flag == 1)
-                client._res._body = autoindex(client);
-            else
-                client.read_fd = open(client._req.get_conf()["path"].c_str(), O_RDONLY);
-        }
-        else
-            client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
-    
-        client._status = Client::HEADERS;
-        client.set_read_file(true);
-        return ;
-    }
-    else if (client._status == Client::HEADERS)
-    {
+		if (client._req.get_error_code() == 200)
+		{
+			if (client.autoidx_flag == 1)
+				client._res._body = autoindex(client);
+			else
+				client.read_fd = open(client._req.get_conf()["path"].c_str(), O_RDONLY);
+		}
+		else
+			client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
+
+		client._status = Client::HEADERS;
+		client.set_read_file(true);
+		return;
+	}
+	else if (client._status == Client::HEADERS)
+	{
 		client._res._start_line = getStartLine(client);
 
-        if (client._req.get_error_code() == 401)
-            setWWWAuthentication(client);
-        setAllow(client);
-        setDate(client);
-        setLastModified(client);
-        setServer(client);
+		if (client._req.get_error_code() == 401)
+			setWWWAuthentication(client);
+		setAllow(client);
+		setDate(client);
+		setLastModified(client);
+		setServer(client);
 
-        if (client.autoidx_flag == 1 || client._req.get_error_code() != 200)
-            client._res._header["Content-Type"] = "text/html";
-        else
-            setContentType(client);
-        client._status = Client::BODY;
-    }
+		if (client.autoidx_flag == 1 || client._req.get_error_code() != 200)
+			client._res._header["Content-Type"] = "text/html";
+		else
+			setContentType(client);
+		client._status = Client::BODY;
+	}
 	else if (client._status == Client::BODY)
-    {
+	{
 		if (client.read_fd == -1)
-        {
-            //client._res._header["Content-Length"] = std::to_string(client._res._body.size());
-            client._res._header["Content-Length"] = "0";
+		{
+			//client._res._header["Content-Length"] = std::to_string(client._res._body.size());
+			client._res._header["Content-Length"] = "0";
 			client._res._body.clear();
-            create_response(client);
-            client._status = Client::RESPONSE;
-        }
-    }
+			create_response(client);
+			client._status = Client::RESPONSE;
+		}
+	}
 }
 
 void Handler::Delete(Client &client)
@@ -316,7 +309,7 @@ void Handler::Options(Client &client)
 			client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
 		client._status = Client::HEADERS;
 		client.set_read_file(true);
-		return ;	
+		return;
 	}
 	else if (client._status == Client::HEADERS)
 	{
@@ -328,14 +321,14 @@ void Handler::Options(Client &client)
 		setContentType(client);
 		client._status = Client::BODY;
 	}
-	else if	(client._status == Client::BODY)
+	else if (client._status == Client::BODY)
 	{
 		if (client.read_fd == -1)
 		{
-            client._res._header["Content-Length"] = std::to_string(client._res._body.size());
-            create_response(client);
-            client._status = Client::RESPONSE;
-        }
+			client._res._header["Content-Length"] = std::to_string(client._res._body.size());
+			create_response(client);
+			client._status = Client::RESPONSE;
+		}
 	}
 }
 
@@ -355,14 +348,14 @@ void Handler::Trace(Client &client)
 		if (client._req.get_error_code() == 200)
 		{
 			client._res._body += client._req.get_method_str() + " " + client._req.get_uri() + " HTTP/1.1\n";
-			for (std::map<std::string, std::string>::iterator it(client._req._headers.begin());it != client._req._headers.end(); ++it)
+			for (std::map<std::string, std::string>::iterator it(client._req._headers.begin()); it != client._req._headers.end(); ++it)
 				client._res._body += it->first + ": " + it->second + "\r\n";
 		}
 		else
 			client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
 		client._status = Client::HEADERS;
 		client.set_read_file(true);
-		return ;	
+		return;
 	}
 	else if (client._status == Client::HEADERS)
 	{
@@ -375,96 +368,94 @@ void Handler::Trace(Client &client)
 			setContentType(client);
 		client._status = Client::BODY;
 	}
-	else if	(client._status == Client::BODY)
+	else if (client._status == Client::BODY)
 	{
 		if (client.read_fd == -1)
 		{
-            create_response(client);
-            client._status = Client::RESPONSE;
-        }
+			create_response(client);
+			client._status = Client::RESPONSE;
+		}
 	}
 }
 
-
-void Handler::Post (Client &client)
+void Handler::Post(Client &client)
 {
 	std::string res;
 
 	if (client._status == Client::START)
-    {
+	{
 
-        std::string file_extension = "." + trim_extension(client._req.get_conf()["path"]);
-        std::vector<std::string> extensions = split(client._req.get_conf()["cgi_extension"], ' ');
+		std::string file_extension = "." + trim_extension(client._req.get_conf()["path"]);
+		std::vector<std::string> extensions = split(client._req.get_conf()["cgi_extension"], ' ');
 
-        for (unsigned long i = 0; i < extensions.size(); i++)
-        {
-            if (extensions[i] == file_extension)
-            {
-                cgi(extensions[i], client);
-                client._status = Client::CGI;
-                return ;
-            }
-        }
-
-        if (client._req.get_error_code() == 200)
+		for (unsigned long i = 0; i < extensions.size(); i++)
 		{
- 			client.write_fd = open(client._req.get_conf()["path"].c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
+			if (extensions[i] == file_extension)
+			{
+				cgi(extensions[i], client);
+				client._status = Client::CGI;
+				return;
+			}
+		}
+
+		if (client._req.get_error_code() == 200)
+		{
+			client.write_fd = open(client._req.get_conf()["path"].c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
 			client.set_write_file(true);
 		}
 		else
 		{
-            client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
+			client.read_fd = open(client._req.get_conf()["error_page"].c_str(), O_RDONLY);
 			client.set_read_file(true);
 		}
-        client._status = Client::HEADERS;
-        
-        return ;
-    }
-    else if (client._status == Client::CGI)
-    {
+		client._status = Client::HEADERS;
+
+		return;
+	}
+	else if (client._status == Client::CGI)
+	{
 		if (client.read_fd == -1)
 		{
 			parseCGIResult(client);
 			client._status = Client::HEADERS;
 		}
-        return ;
-    }
-    else if (client._status == Client::HEADERS)
-    {
+		return;
+	}
+	else if (client._status == Client::HEADERS)
+	{
 		client._res._start_line = getStartLine(client);
 
-        if (client._req.get_error_code() == 401)
-            setWWWAuthentication(client);
-        setAllow(client);
-        setDate(client);
-        setLastModified(client);
-        setServer(client);
+		if (client._req.get_error_code() == 401)
+			setWWWAuthentication(client);
+		setAllow(client);
+		setDate(client);
+		setLastModified(client);
+		setServer(client);
 
-        if (client._req.get_error_code() != 200)
-            client._res._header["Content-Type"] = "text/html";
-        else
-            setContentType(client);
-        client._status = Client::BODY;
-    }
+		if (client._req.get_error_code() != 200)
+			client._res._header["Content-Type"] = "text/html";
+		else
+			setContentType(client);
+		client._status = Client::BODY;
+	}
 	else if (client._status == Client::BODY)
-    {
+	{
 		if (client.read_fd == -1 && client.write_fd == -1)
-        {
-            client._res._header["Content-Length"] = std::to_string(client._res._body.size());
+		{
+			client._res._header["Content-Length"] = std::to_string(client._res._body.size());
 			create_response(client);
-            client._status = Client::RESPONSE;
-        }
-    }
+			client._status = Client::RESPONSE;
+		}
+	}
 }
 
-
-void	Handler::cgi(std::string extension, Client &client)
+void Handler::cgi(std::string extension, Client &client)
 {
-	char	**args;
-	int		ret;
-	int		tubes[2];
-	std::string	res;
-	struct stat	php;
+	char **args;
+	int ret;
+	int tubes[2];
+	std::string res;
+	struct stat php;
 	char **env = Env(client);
 
 	args = (char **)(malloc(sizeof(char *) * 3));
@@ -493,12 +484,12 @@ void	Handler::cgi(std::string extension, Client &client)
 		dup2(tubes[0], 0);
 		dup2(client.tmp_fd, 1);
 		if (stat(client._req.get_conf()["path"].c_str(), &php) != 0 ||
-		!(php.st_mode & S_IFREG))
+				!(php.st_mode & S_IFREG))
 		{
 			std::cerr << "Error CGI" << std::endl;
 			exit(1);
 		}
-		
+
 		if ((ret = execve(args[0], args, env)) == -1)
 		{
 			std::cerr << std::string(strerror(errno)) << std::endl;
@@ -506,29 +497,30 @@ void	Handler::cgi(std::string extension, Client &client)
 		}
 	}
 	else
-	{	client.write_fd = tubes[1];
+	{
+		client.write_fd = tubes[1];
 		client.read_fd = open("cgi.txt", O_RDONLY);
 		close(tubes[0]);
-        client.set_write_file(true);
-        client.set_read_file(true);
+		client.set_write_file(true);
+		client.set_read_file(true);
 	}
 
 	ft_free(args);
 	ft_free(env);
 }
 
-void		Handler::parseCGIResult(Client &client)
+void Handler::parseCGIResult(Client &client)
 {
-	size_t			pos;
-	std::string		headers;
-	std::string		key;
-	std::string		value;
-	std::string		tmp_status;
+	size_t pos;
+	std::string headers;
+	std::string key;
+	std::string value;
+	std::string tmp_status;
 
 	std::string buf = client._res._body;
 
-    if (buf.find("\r\n\r\n") == std::string::npos)
-		return ;
+	if (buf.find("\r\n\r\n") == std::string::npos)
+		return;
 	headers = buf.substr(0, buf.find("\r\n\r\n") + 1);
 	pos = headers.find("Status");
 	if (pos != std::string::npos)
@@ -572,16 +564,16 @@ void		Handler::parseCGIResult(Client &client)
 	key = "Content-Length";
 	value = std::to_string(client._res._body.size());
 	client._res._header.insert(std::pair<std::string, std::string>(key, value));
-
 }
 
-char	**Handler::Env(Client &client)
+char **Handler::Env(Client &client)
 {
-	char	**env = 0;
+	char **env = 0;
 	std::map<std::string, std::string> map;
 
 	map["CONTENT_LENGTH"] = std::to_string(client._req.get_body().size());
-	map["CONTENT_TYPE"] = "text/html"; //client._res._header["Content-Type"];
+	setContentType(client);
+	map["CONTENT_TYPE"] = client._res._header["Content-Type"];
 
 	map["GATEWAY_INTERFACE"] = "CGI/1.1";
 	map["PATH_INFO"] = client._req.get_conf()["path"];
@@ -640,48 +632,46 @@ char	**Handler::Env(Client &client)
 void Handler::Put(Client &client)
 {
 	std::string res;
-	std::string	url;
+	std::string url;
 
 	url = client._req.get_conf()["path"];
 
 	if (client._status == Client::START)
-    {
-        client.write_fd = open(url.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0666);
-    
-        client._status = Client::HEADERS;
-        client.set_write_file(true);
-        return ;
-    }
-    else if (client._status == Client::HEADERS)
-    {
+	{
+		client.write_fd = open(url.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0666);
+
+		client._status = Client::HEADERS;
+		client.set_write_file(true);
+		return;
+	}
+	else if (client._status == Client::HEADERS)
+	{
 		client._res._start_line = "HTTP/1.1 204 No Content";
 
-        if (client._req.get_error_code() == 401)
-            setWWWAuthentication(client);
-        setDate(client);
-        setContentLocation(client);
-        setServer(client);
+		if (client._req.get_error_code() == 401)
+			setWWWAuthentication(client);
+		setDate(client);
+		setContentLocation(client);
+		setServer(client);
 
-        client._status = Client::BODY;
-    }
+		client._status = Client::BODY;
+	}
 	else if (client._status == Client::BODY)
-    {
+	{
 		if (client.write_fd == -1)
-        {
+		{
 			client._res._body.clear();
-            create_response(client);
-            client._status = Client::RESPONSE;
-        }
-    }
+			create_response(client);
+			client._status = Client::RESPONSE;
+		}
+	}
 }
 
-
-
-std::string	Handler::autoindex(Client &client)
+std::string Handler::autoindex(Client &client)
 {
-	DIR				*dir;
-	struct dirent	*cur;
-	std::string		res;
+	DIR *dir;
+	struct dirent *cur;
+	std::string res;
 
 	dir = opendir(client._req.get_conf()["path"].c_str());
 	res += "<html>\n<body>\n";
@@ -704,10 +694,9 @@ std::string	Handler::autoindex(Client &client)
 	return (res);
 }
 
-
-void Handler::create_response(Client& client)
+void Handler::create_response(Client &client)
 {
-    std::map<std::string, std::string>::iterator b;
+	std::map<std::string, std::string>::iterator b;
 
 	client._res_msg = client._res._start_line + "\r\n";
 	b = client._res._header.begin();
@@ -717,10 +706,9 @@ void Handler::create_response(Client& client)
 			client._res_msg += b->first + ": " + b->second + "\r\n";
 		++b;
 	}
-	
+
 	client._res_msg += "\r\n";
 	client._res_msg += client._res._body;
 	// std::cout << client._res_msg << std::endl;
 	client._res.clear();
 }
-
