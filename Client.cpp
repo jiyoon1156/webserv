@@ -12,7 +12,7 @@ Client::Client(int fd, fd_set *rset, fd_set *wset, std::string ip) : _req(ip)
     _wset = wset;
 
     fcntl(fd, F_SETFL, O_NONBLOCK);
-    FD_SET(fd, _rset);
+    FT_FD_SET(fd, _rset);
 
     _rbuf = "";
     _time = get_time();
