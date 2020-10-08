@@ -51,8 +51,6 @@ typedef uint32_t ft_fd_mask;
 #define FT_NFDBITS ((unsigned)(sizeof(ft_fd_mask) * FT_NBBY))
 #define HOWMANY(x, y) (((x) + (y) - 1) / (y))
 
-// void howmany(int x, unsigned long y)
-
 typedef struct ft_fd_set {
     ft_fd_mask fds_bits[HOWMANY(FT_FD_SETSIZE, FT_NFDBITS)];
 } ft_fd_set;

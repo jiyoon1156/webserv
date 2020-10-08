@@ -224,14 +224,9 @@ void	Config::parse(void)
 				while (it != g_servers.end())
 				{
 					if (this->_conf["server|"]["listen"] == it->_conf.back()["server|"]["listen"])
-					{
-                        // if (this->_conf["server|"]["server_name"] == it->_conf.back()["server|"]["server_name"])
-						// 	throw ConfigException();
-						// else
-						// 	it->_conf.push_back(this->_conf);
                         throw ConfigException();
-						// break ;
-					}
+                    if (this->_conf["server|"]["server_name"] == it->_conf.back()["server|"]["server_name"])
+                        throw ConfigException();
 					++it;
 				}
 				if (it == g_servers.end())

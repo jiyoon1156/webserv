@@ -134,13 +134,12 @@ void Client::read_file(void)
 		}
 	}
 
-    int ret = 0;
-	while ((ret = read(read_fd, buffer, BUFFER_SIZE)) > 0)
-	{
-		buffer[ret] = '\0';
-		std::string	tmp(buffer, ret);
-		_res._body += tmp;
-	}
+    int ret = read(read_fd, buffer, BUFFER_SIZE);
+	
+	buffer[ret] = '\0';
+	std::string	tmp(buffer, ret);
+	_res._body += tmp;
+	
 	if (ret == 0)
 	{
 		close(read_fd);
