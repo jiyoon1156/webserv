@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 
 		for (std::vector<Server>::iterator s(g_servers.begin()); s != g_servers.end(); ++s)
 		{
-			if (FD_ISSET(s->get_fd(), &cp_rset))
+			if (FT_FD_ISSET(s->get_fd(), &cp_rset))
 			{
 				try
 				{
@@ -78,13 +78,13 @@ int main(int argc, char **argv)
 			{
 				client = *c;
 
-				if (FD_ISSET(client->get_fd(), &cp_rset))
+				if (FT_FD_ISSET(client->get_fd(), &cp_rset))
 				{
 					if (!s->read_request(c))
 						break ;
 				}
 
-				if (FD_ISSET(client->get_fd(), &cp_wset))
+				if (FT_FD_ISSET(client->get_fd(), &cp_wset))
 				{
 					if (!s->write_response(c))
 						break ;
@@ -92,13 +92,13 @@ int main(int argc, char **argv)
 
 				if (client->write_fd != -1)
 				{
-					if (FD_ISSET(client->write_fd, &cp_wset))
+					if (FT_FD_ISSET(client->write_fd, &cp_wset))
 						client->write_file();
 				}
 
 				if (client->read_fd != -1)
 				{
-					if (FD_ISSET(client->read_fd, &cp_rset))
+					if (FT_FD_ISSET(client->read_fd, &cp_rset))
 						client->read_file();
 				}
 				

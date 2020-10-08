@@ -52,7 +52,7 @@ void Server::init(fd_set *rset, fd_set *wset, fd_set *cp_rset, fd_set *cp_wset)
 		throw ServerException("listen()", std::string(strerror(errno)));
 	if (fcntl(_fd, F_SETFL, O_NONBLOCK) == -1)
 		throw ServerException("fcntl()", std::string(strerror(errno)));
-	FD_SET(_fd, _rset);
+	FT_FD_SET(_fd, _rset);
 	_max_fd = _fd;
 
 	std::cout << "[Server listening to " << _port << "] starts running." << std::endl;
@@ -103,7 +103,7 @@ int Server::read_request(std::vector<Client*>::iterator it)
 
 		if (c->_req.parse_request(c->_rbuf, _conf))
 		{
-			FD_SET(c->_fd, _wset);
+			FT_FD_SET(c->_fd, _wset);
 			return (1);
 		}
 	}
@@ -146,7 +146,7 @@ int	Server::write_response(std::vector<Client *>::iterator it)
 			c->_status = Client::START;
 			c->autoidx_flag = 0;
 			c->_res_msg.clear();
-			FD_CLR(c->get_fd(), _wset);
+			FT_FD_CLR(c->get_fd(), _wset);
 		}
 		c->_time = get_time();
 	}

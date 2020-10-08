@@ -39,10 +39,10 @@ void	Config::sig_handler(int signum)
 void Config::init(fd_set *rset, fd_set *wset, fd_set *cp_rset, fd_set *cp_wset)
 {
     signal(SIGINT, sig_handler);
-    FD_ZERO(rset);
-    FD_ZERO(wset);
-    FD_ZERO(cp_rset);
-    FD_ZERO(cp_wset);
+    FT_FD_ZERO(rset);
+    FT_FD_ZERO(wset);
+    FT_FD_ZERO(cp_rset);
+    FT_FD_ZERO(cp_wset);
     for (std::vector<Server>::iterator it(g_servers.begin()); it != g_servers.end(); ++it)
         it->init(rset, wset, cp_rset, cp_wset);
 }

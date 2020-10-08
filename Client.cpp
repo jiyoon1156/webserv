@@ -24,18 +24,18 @@ Client::~Client()
     if (_fd != -1)
     {
         close(_fd);
-        FD_CLR(_fd, _rset);
-        FD_CLR(_fd, _wset);
+        FT_FD_CLR(_fd, _rset);
+        FT_FD_CLR(_fd, _wset);
     }
 	if (read_fd != -1)
 	{
 		close(read_fd);
-		FD_CLR(read_fd, _rset);
+		FT_FD_CLR(read_fd, _rset);
 	}
 	if (write_fd != -1)
 	{
 		close(write_fd);
-		FD_CLR(write_fd, _wset);	
+		FT_FD_CLR(write_fd, _wset);	
 	}
 	if (tmp_fd != -1)
 		close(tmp_fd);
@@ -74,9 +74,9 @@ void	Client::set_write_file(bool flag)
 	if (write_fd != -1)
 	{
 		if (flag)
-			FD_SET(write_fd, _wset);
+			FT_FD_SET(write_fd, _wset);
 		else
-			FD_CLR(write_fd, _wset);
+			FT_FD_CLR(write_fd, _wset);
 	}
 }
 
@@ -85,9 +85,9 @@ void	Client::set_read_file(bool flag)
 	if (read_fd != -1)
 	{
 		if (flag)
-			FD_SET(read_fd, _rset);
+			FT_FD_SET(read_fd, _rset);
 		else
-			FD_CLR(read_fd, _rset);
+			FT_FD_CLR(read_fd, _rset);
 	}
 }
 
@@ -103,7 +103,7 @@ void Client::write_file(void)
 	{
 		_req.get_body().clear();
 		close(write_fd);
-		FD_CLR(write_fd, _wset);
+		FT_FD_CLR(write_fd, _wset);
 		write_fd = -1;
 	}
 }
@@ -126,7 +126,7 @@ void Client::read_file(void)
 				cgi_pid = -1;
 				unlink("cgi.txt");
 				close(read_fd);
-				FD_CLR(read_fd, _rset);
+				FT_FD_CLR(read_fd, _rset);
 				read_fd = -1;
 				_res._body = "CGI_ERROR\n";
 				return ;
@@ -145,7 +145,7 @@ void Client::read_file(void)
 	{
 		close(read_fd);
 		unlink("cgi.txt");
-		FD_CLR(read_fd, _rset);
+		FT_FD_CLR(read_fd, _rset);
 		read_fd = -1;
 	}
 }
