@@ -119,7 +119,7 @@ void Client::read_file(void)
 			return ;
 		else
 		{
-			if (WEXITSTATUS(status) == 1)
+			if ((status >> 8) == 1)
 			{
 				close(tmp_fd);
 				tmp_fd = -1;

@@ -122,7 +122,7 @@ void	Request::feed_conf(std::vector<conf> &conf_input)
             _conf[it->first] = it->second;
     }
     lstat(_conf["path"].c_str(), &info);
-    if (S_ISDIR(info.st_mode)) //directory면 default index page open
+    if (FT_S_ISDIR(info.st_mode)) //directory면 default index page open
     {
         if (_conf["index"][0] && _conf["autoindex"] != "on")
             _conf["path"] += "/" + elem["index"];
@@ -306,7 +306,7 @@ std::string Request::decode_base_64(const char *data)
     while (*data != ' ')
 		data++;
 	data++;
-	unsigned int len = strlen(data);
+	unsigned int len = ft_strlen(data);
 	unsigned char* p = (unsigned char*)data;
     int pad = len > 0 && (len % 4 || p[len - 1] == '=');
     const size_t L = ((len + 3) / 4 - pad) * 4;

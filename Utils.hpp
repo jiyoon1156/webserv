@@ -89,5 +89,8 @@ __fd_isset(int fd, const fd_set *p)
 		_p->fds_bits[--_n] = 0;			\
 } while (0)
 
+#define        FT_S_ISTYPE(mode, mask)        (((mode) & S_IFMT) == (mask))
+#define        FT_S_ISDIR(mode)         FT_S_ISTYPE((mode), S_IFDIR)
+
 
 #endif
