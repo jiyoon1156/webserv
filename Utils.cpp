@@ -60,8 +60,6 @@ std::string trim_url(const std::string& str)//파일이름
 {
     size_t first = str.find_last_of('/');
 
-    // if (std::string::npos == first)
-        // return str;
     size_t last = str.find_last_of(' ');
     return (str.substr(first + 1, (last - first + 1)));
 }
