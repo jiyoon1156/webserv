@@ -397,7 +397,7 @@ void Handler::Post(Client &client)
 				return;
 			}
 		}
-
+		std::cout << client._req.get_error_code() << std::endl;
 		if (client._req.get_error_code() == 200)
 		{
 			client.write_fd = open(client._req.get_conf()["path"].c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
