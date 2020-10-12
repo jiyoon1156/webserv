@@ -127,9 +127,8 @@ void	Request::feed_conf(std::vector<conf> &conf_input)
         if (_conf["index"][0] && _conf["autoindex"] != "on")
             _conf["path"] += "/" + elem["index"];
     }
-    if (_conf["path"] == "//")
-        _conf["path"] = _conf["index"];
-
+	if (_conf["path"] == "//")
+		_conf["path"] = _conf["index"];
 	if (_conf.find("limit_body_size") != _conf.end())
         _limit_body_size = std::stoi(_conf["limit_body_size"]);
     
