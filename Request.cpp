@@ -152,7 +152,7 @@ void	Request::feed_conf(std::vector<conf> &conf_input)
         if (_headers.find("Authorization") != _headers.end())
         {
             std::string credentials = decode_base_64(_headers["Authorization"].c_str());
-            if (credentials == _conf["auth"])
+            if (ft_strcmp(credentials.c_str(), _conf["auth"].c_str()) == 0)
                 _error_code = 200;
         }
     }
